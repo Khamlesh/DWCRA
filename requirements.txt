@@ -5,4 +5,5 @@ Werkzeug
 Flask-Mail
 Flask-Uploads
 python-dotenv
-itsdangerous 
+itsdangerous
+reportlab 

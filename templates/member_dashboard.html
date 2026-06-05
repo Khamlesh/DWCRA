@@ -170,18 +170,44 @@
             <h4>Your Payment Status</h4>
         </div>
         <div class="card-body">
-            {# Placeholder for dynamic content related to individual payment status #}
-            <p class="text-muted">This section will display your current payment status, next due date, and any outstanding amounts. (Example: <strong>Next Due:</strong> {{ next_due_date }} | <strong>Amount:</strong> ₹{{ amount_due }})</p>
-            {# Example dynamic content structure: #}
-            {#
-            {% if dues_today %}
-            <p class="h5 text-danger">You have ₹{{ dues_today }} due today!</p>
-            {% elif current_month_paid %}
-            <p class="h5 text-success">You've paid for the current month! Keep up the good work.</p>
+            {% if loan_info %}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Loan Amount:</strong> ₹{{ loan_info.amount }}</p>
+                        <p class="mb-1"><strong>Start Date:</strong> {{ loan_info.start_date.strftime('%Y-%m-%d') if loan_info.start_date else 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if current_month_paid %}
+                            <p class="h5 text-success mb-1">This month's installment is paid.</p>
+                        {% else %}
+                            <p class="h5 text-danger mb-1">Next payment due: ₹{{ amount_due }}</p>
+                            <p class="mb-1"><strong>Due month:</strong> {{ next_due_date }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <div class="p-3 bg-light rounded">
+                            <strong>Total Paid</strong>
+                            <p class="mb-0">₹{{ total_paid_amount }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="p-3 bg-light rounded">
+                            <strong>Installments</strong>
+                            <p class="mb-0">Paid {{ paid_installments }} / 12</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="p-3 bg-light rounded">
+                            <strong>Current Status</strong>
+                            <p class="mb-0">{{ 'Paid' if current_month_paid else 'Due' }}</p>
+                        </div>
+                    </div>
+                </div>
             {% else %}
-            <p class="h5">Your next payment of ₹{{ next_payment_amount }} is due on {{ next_payment_date }}.</p>
+                <p class="text-muted mb-0">No active loan found for your group. Ask your leader to apply, or check your group membership.</p>
             {% endif %}
-            #}
         </div>
     </div>
 
@@ -190,9 +216,42 @@
             <h4>Your Payment History Overview</h4>
         </div>
         <div class="card-body">
-            <canvas id="paymentChart"></canvas>
-            {% if not payment_chart or payment_chart|length == 0 %}
-            <p class="text-muted text-center mt-3">No payment data available to display chart.</p>
+            {% if loan_info %}
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded text-center">
+                            <strong>Paid</strong>
+                            <p class="mb-0">{{ paid_installments }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded text-center">
+                            <strong>Due</strong>
+                            <p class="mb-0">{{ unpaid_installments }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded text-center">
+                            <strong>Total Paid</strong>
+                            <p class="mb-0">₹{{ total_paid_amount }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded text-center">
+                            <strong>Last Payment</strong>
+                            <p class="mb-0">{{ last_payment_date.strftime('%Y-%m-%d') if last_payment_date else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% if payment_chart and payment_chart|sum > 0 %}
+                    <div class="chart-container">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No payment chart data available yet. Your payment history summary will update after your first installment.</p>
+                {% endif %}
+            {% else %}
+                <p class="text-muted">No payment history available. Start by making your first payment.</p>
             {% endif %}
         </div>
     </div>
@@ -215,78 +274,90 @@
         </div>
     </div>
 
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h4>12-Month Repayment Schedule</h4>
+            </div>
+            <div class="card-body">
+                {% if loan_schedule %}
+                    {% if current_month_paid %}
+                        <p class="text-success mb-3">You've paid the current month&apos;s installment. Great job!</p>
+                    {% else %}
+                        <p class="text-muted mb-3">Next due: <strong>{{ next_due_date }}</strong> for <strong>₹{{ amount_due }}</strong>.</p>
+                    {% endif %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Installment</th>
+                                    <th>Due Month</th>
+                                    <th>Due Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in loan_schedule %}
+                                <tr class="{% if item.is_current %}table-primary{% endif %}">
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ item.month }}</td>
+                                    <td>₹{{ item.due_amount }}</td>
+                                    <td>{{ item.status }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Repayment schedule not available yet. Apply for a loan or contact your group leader to get the full schedule.</p>
+                {% endif %}
+            </div>
+        </div>
+
 {% endblock %}
 
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const paymentData = {{ payment_chart|safe }}; // Ensure this is a JSON string of an array
-            const ctx = document.getElementById('paymentChart').getContext('2d');
+            const paymentData = {{ payment_chart_json|safe }};
+            const chartCanvas = document.getElementById('paymentChart');
+            if (!chartCanvas || !Array.isArray(paymentData)) {
+                return;
+            }
 
-            new Chart(ctx, {
+            const totalPaid = paymentData.reduce((sum, value) => sum + Number(value), 0);
+            if (totalPaid === 0) {
+                return;
+            }
+
+            new Chart(chartCanvas, {
                 type: 'bar',
                 data: {
-                    labels: Array.from({length: paymentData.length}, (_, i) => `Month ${i+1}`),
+                    labels: paymentData.map((_, index) => `Month ${index + 1}`),
                     datasets: [{
                         label: 'Amount Paid (₹)',
                         data: paymentData,
-                        backgroundColor: 'rgba(63, 81, 181, 0.8)', /* Primary blue for bars */
+                        backgroundColor: 'rgba(63, 81, 181, 0.8)',
                         borderColor: 'rgba(63, 81, 181, 1)',
                         borderWidth: 1,
-                        borderRadius: 5, /* Slightly rounded bars */
+                        borderRadius: 5
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, /* Allow height to be controlled by CSS */
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Your Individual Payment History',
-                            font: {
-                                family: 'Montserrat',
-                                size: 18,
-                                weight: '600'
-                            },
-                            color: '#495057'
-                        },
-                        legend: {
-                            labels: {
-                                font: {
-                                    family: 'Open Sans'
-                                }
-                            }
-                        }
-                    },
+                    maintainAspectRatio: false,
                     scales: {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Loan Months',
-                                font: { family: 'Open Sans', size: 14, weight: '600' },
-                                color: '#555'
-                            },
-                            ticks: {
-                                font: { family: 'Open Sans' }
-                            },
-                            grid: {
-                                display: false
+                                text: 'Loan Month'
                             }
                         },
                         y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Amount Paid (₹)',
-                                font: { family: 'Open Sans', size: 14, weight: '600' },
-                                color: '#555'
-                            },
-                            ticks: {
-                                font: { family: 'Open Sans' }
-                            },
-                            grid: {
-                                color: '#e9ecef' /* Lighter grid lines */
+                                text: 'Amount Paid (₹)'
                             }
                         }
                     }

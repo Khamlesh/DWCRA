@@ -406,9 +406,12 @@
                 <button class="btn btn-outline-primary" onclick="refreshDashboard()">
                     <i class="fas fa-sync-alt me-1"></i>Refresh
                 </button>
-                <button class="btn btn-primary" onclick="generateReport()">
-                    <i class="fas fa-download me-1"></i>Export Report
-                </button>
+                <a href="{{ url_for('admin_export_reports', format='csv') }}" class="btn btn-primary">
+                    <i class="fas fa-file-csv me-1"></i>Export CSV
+                </a>
+                <a href="{{ url_for('admin_export_reports', format='pdf') }}" class="btn btn-danger">
+                    <i class="fas fa-file-pdf me-1"></i>Export PDF
+                </a>
             </div>
         </div>
 
@@ -727,8 +730,7 @@
         }
 
         function generateReport() {
-            // Implementation for report generation
-            alert('Report generation feature will be implemented');
+            // No-op: export buttons now handle report export directly.
         }
 
         // Auto-refresh every 5 minutes

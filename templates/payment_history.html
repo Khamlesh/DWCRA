@@ -145,6 +145,7 @@
                                         <th>Amount</th>
                                         <th>Paid On</th>
                                         <th>Status</th>
+                                        <th>Receipt</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -155,12 +156,20 @@
                                         <td>₹{{ p.amount | round(2) }}</td>
                                         <td>{{ p.paid_on if p.paid_on else '-' }}</td>
                                         <td>
-                                            {% if p.status == 'Paid' %}
-                                                <span class="status-badge status-paid">{{ p.status }}</span>
-                                            {% elif p.status == 'Due' %}
-                                                <span class="status-badge status-due">{{ p.status }}</span>
+                                            {% set status = p.status.lower() %}
+                                            {% if status == 'paid' %}
+                                                <span class="status-badge status-paid">Paid</span>
+                                            {% elif status == 'due' or status == 'unpaid' %}
+                                                <span class="status-badge status-due">{{ p.status.title() }}</span>
                                             {% else %}
-                                                <span class="status-badge status-pending">{{ p.status }}</span>
+                                                <span class="status-badge status-pending">{{ p.status.title() }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if status == 'paid' %}
+                                                <a href="{{ url_for('receipt', payment_id=p.payment_id) }}" class="btn btn-sm btn-primary">Download</a>
+                                            {% else %}
+                                                <span class="text-muted">N/A</span>
                                             {% endif %}
                                         </td>
                                     </tr>
