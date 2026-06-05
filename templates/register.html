@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+
+{% block title %}DWCRA Portal - Register{% endblock %}
+
+{% block head %}
+    <style>
+        /* Specific styles for the Register page card and form */
+        .register-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Stronger shadow for prominence */
+            overflow: hidden;
+            max-width: 450px; /* Optimal width for a registration form */
+            margin: 3rem auto; /* Center the card horizontally and add top/bottom margin */
+        }
+
+        .register-card .card-header {
+            background: linear-gradient(135deg, #3F51B5 0%, #2196F3 100%); /* Blue gradient header */
+            color: #fff;
+            padding: 2rem 1.5rem;
+            border-bottom: none;
+            text-align: center;
+        }
+
+        .register-card .card-header .header-logo {
+            width: 80px; /* Larger logo in header */
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for logo */
+        }
+
+        .register-card .card-header h4 {
+            font-size: 2.2rem; /* Larger title for emphasis */
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem; /* Space between portal name and "Register" */
+        }
+
+        .register-card .card-header h5 {
+            font-size: 1.6rem; /* Size for "Register" */
+            font-weight: 600;
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
+
+        .register-card .card-body {
+            padding: 2rem;
+            background-color: #fff;
+        }
+
+        /* Form control styling consistent with other forms */
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #3F51B5;
+            box-shadow: 0 0 0 0.25rem rgba(63, 81, 181, 0.25);
+        }
+
+        /* Register Button */
+        .btn-register {
+            background-color: #4CAF50 !important; /* Success green for primary action */
+            border-color: #4CAF50 !important;
+            font-weight: 600;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            width: 100%; /* Make button full width */
+            font-size: 1.1rem;
+        }
+
+        .btn-register:hover {
+            background-color: #43A047 !important;
+            border-color: #43A047 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Login Redirect Link/Button */
+        .btn-login-redirect {
+            display: block; /* Make it a block element for full width */
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: #3F51B5; /* Primary blue for the link */
+            font-weight: 600;
+            text-decoration: none; /* No underline by default */
+            transition: color 0.2s ease;
+        }
+        .btn-login-redirect:hover {
+            color: #2196F3; /* Lighter blue on hover */
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5 col-xl-4">
+            <div class="card register-card">
+                <div class="card-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNA6XUOGgfbKWj6ejiYD8fhXc_cQAPt1hwlg&s" alt="DWCRA Logo" class="header-logo">
+                    <h4>{{ translations.portal_title }}</h4>
+                    <h5>{{ translations.register_account }}</h5>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {# Flash messages are handled by layout.html, but if you want specific placement within the card: #}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="unique_id" class="form-label">{{ translations.unique_id }}</label>
+                            <input type="text" class="form-control" id="unique_id" name="unique_id" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ translations.full_name }}</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ translations.email_address }}</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bank_name" class="form-label">{{ translations.bank_name }}</label>
+                            <input type="text" class="form-control" id="bank_name" name="bank_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{{ translations.password }}</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-4"> {# mb-4 for more space before button #}
+                            <label for="role" class="form-label">{{ translations.role }}</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="" disabled selected>{{ translations.select_role }}</option> {# Added default option #}
+                                <option value="leader">{{ translations.group_leader }}</option>
+                                <option value="member">{{ translations.group_member }}</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-register">{{ translations.register_button }}</button>
+                    </form>
+                    <a href="/" class="btn-login-redirect">{{ translations.already_have_account }}</a>
+                </div>
+            </div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {# Add any page-specific JavaScript here if needed #}
+{% endblock %}

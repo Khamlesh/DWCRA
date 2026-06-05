@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs - DWCRA Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Open Sans', sans-serif; background-color: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #3F51B5 0%, #5C6BC0 100%); }
+        .card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        .table th { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); font-weight: 700; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/admin_dashboard">
+                <i class="fas fa-tachometer-alt me-2"></i>DWCRA Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/admin_dashboard">Dashboard</a>
+                <a class="nav-link" href="/admin/users">Users</a>
+                <a class="nav-link" href="/admin/groups">Groups</a>
+                <a class="nav-link" href="/admin/loans">Loans</a>
+                <a class="nav-link active" href="/admin/audit-logs">Audit Logs</a>
+                <a class="nav-link" href="/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-history me-2"></i>Audit Logs</h2>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Admin Activity Log</h5>
+            </div>
+            <div class="card-body">
+                {% if audit_logs %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Admin</th>
+                                <th>Action</th>
+                                <th>Description</th>
+                                <th>Target</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in audit_logs %}
+                            <tr>
+                                <td>{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') if log.created_at else 'N/A' }}</td>
+                                <td>{{ log.admin_name }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ log.action_type }}</span>
+                                </td>
+                                <td>{{ log.action_description }}</td>
+                                <td>{{ log.target_table }} #{{ log.target_id if log.target_id else 'N/A' }}</td>
+                                <td>{{ log.ip_address if log.ip_address else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No audit logs yet</h5>
+                    <p class="text-muted">Admin activities will be logged here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

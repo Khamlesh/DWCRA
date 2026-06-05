@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Loan - DWCRA Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Loan (ID: {{ loan.loan_id }})</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <input type="number" step="0.01" class="form-control" name="amount" value="{{ loan.amount }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status" required>
+                                <option value="pending" {% if loan.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="approved" {% if loan.status == 'approved' %}selected{% endif %}>Approved</option>
+                                <option value="repaid" {% if loan.status == 'repaid' %}selected{% endif %}>Repaid</option>
+                                <option value="rejected" {% if loan.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="/admin/loans" class="btn btn-secondary">Back to Loans</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

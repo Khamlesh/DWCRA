@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DWCRA Portal - Empowering Rural Women</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom CSS for DWCRA Portal */
+
+        /* Global Styles & Typography */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .dwcra-logo-text {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Navbar Customization */
+        .dwcra-navbar {
+            background-color: #3F51B5 !important; /* Deep Indigo - Primary Color */
+            padding: 1rem 0;
+        }
+
+        .navbar-brand-img {
+            height: 50px; /* Slightly smaller logo */
+            width: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #FFC107; /* Amber accent border */
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5); /* Subtle glow */
+        }
+
+        .dwcra-logo-text {
+            font-size: 1.7rem; /* Adjust font size */
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .dwcra-navbar .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .dwcra-navbar .nav-link:hover,
+        .dwcra-navbar .nav-link.active {
+            color: #fff !important;
+            background-color: rgba(255, 255, 255, 0.15); /* Light highlight on hover/active */
+        }
+
+        /* User Guide Section */
+        .user-guide-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .user-guide-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            border-left: 5px solid #3F51B5;
+        }
+
+        .user-guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-guide-icon {
+            font-size: 3rem;
+            color: #3F51B5;
+            margin-bottom: 1rem;
+        }
+
+        .user-guide-btn {
+            background: linear-gradient(135deg, #3F51B5 0%, #5C6BC0 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .user-guide-btn:hover {
+            background: linear-gradient(135deg, #303F9F 0%, #3F51B5 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(63, 81, 181, 0.3);
+        }
+
+        .user-guide-features {
+            background: rgba(63, 81, 181, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .user-guide-feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: #495057;
+        }
+
+        .user-guide-feature-item i {
+            color: #3F51B5;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            /* More engaging image - replace with your own high-res, authentic image */
+            background-image: url('https://tibet.net/wp-content/uploads/2017/02/2017-02-10-Amaravati-GG12_DSC4421.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 600px; /* Increased height for impact */
+            padding: 100px 0; /* Add top/bottom padding */
+        }
+
+        .hero-overlay {
+            background: rgba(0, 50, 100, 0.65); /* Deeper, richer blue-ish overlay */
+            /* background: linear-gradient(to right, rgba(63, 81, 181, 0.7), rgba(76, 175, 80, 0.7)); /* Example gradient */
+        }
+
+        .hero-content {
+            max-width: 900px;
+            z-index: 2; /* Ensure content is above overlay */
+        }
+
+        .dwcra-heading {
+            font-size: 3.8rem; /* Larger, more impactful heading */
+            line-height: 1.1;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            color: #fff; /* Ensure text is white */
+        }
+
+        .dwcra-subheading {
+            font-size: 1.4rem; /* Larger subheading */
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #f8f9fa; /* Off-white for subheading */
+        }
+
+        .dwcra-cta-button {
+            background-color: #FFC107; /* Amber button - strong contrast */
+            color: #333; /* Dark text for contrast on yellow */
+            font-weight: 700;
+            border: none;
+            border-radius: 50px; /* Pill shape */
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dwcra-cta-button:hover {
+            background-color: #FFA000; /* Darker amber on hover */
+            color: #333;
+            transform: translateY(-5px); /* Lift effect */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Features Section */
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid; /* Border color will be set by Bootstrap text classes */
+            padding: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .dwcra-feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 5px solid transparent; /* Placeholder for hover effect */
+        }
+
+        /* Assigning specific border colors based on the text color in the HTML */
+        .text-success + .card-text + .feature-icon { border-color: #4CAF50; }
+        .text-info + .card-text + .feature-icon { border-color: #2196F3; }
+        .text-warning + .card-text + .feature-icon { border-color: #FFC107; }
+        /* Custom color for 'Community Support' as Bootstrap doesn't have a direct purple */
+        .text-purple { color: #9C27B0; }
+        .text-purple + .card-text + .feature-icon { border-color: #9C27B0; }
+
+
+        .dwcra-feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-top-color: #3F51B5; /* Accent border on hover */
+        }
+
+        /* Impact Stories Section */
+        .dwcra-story-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding-bottom: 20px; /* More space at bottom */
+        }
+
+        .dwcra-story-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .dwcra-story-card .card-img-top {
+            width: 150px; /* Consistent size */
+            height: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .dwcra-view-all {
+            border-color: #3F51B5;
+            color: #3F51B5;
+            transition: all 0.3s ease;
+        }
+
+        .dwcra-view-all:hover {
+            background-color: #3F51B5;
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2c3e50 !important; /* Darker blue-grey for a solid footer */
+        }
+
+        footer .nav-link {
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dwcra-heading {
+                font-size: 2.8rem;
+            }
+            .dwcra-subheading {
+                font-size: 1.1rem;
+            }
+            .hero-section {
+                min-height: 500px;
+            }
+            .dwcra-navbar .navbar-brand-img {
+                height: 45px;
+                width: 45px;
+            }
+            .dwcra-logo-text {
+                font-size: 1.4rem;
+            }
+            .user-guide-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dwcra-heading {
+                font-size: 2rem;
+            }
+            .dwcra-subheading {
+                font-size: 0.95rem;
+            }
+            .dwcra-cta-button {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            .feature-item, .story-card {
+                padding: 20px;
+            }
+            .navbar-toggler {
+                font-size: 0.8rem;
+            }
+            .user-guide-card {
+                padding: 1rem;
+            }
+            .user-guide-features {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark dwcra-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/home">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNA6XUOGgfbKWj6ejiYD8fhXc_cQAPt1hwlg&s"
+                     alt="DWCRA Logo" class="navbar-brand-img me-2">
+                <span class="fw-bold dwcra-logo-text">DWCRA Portal</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% if role == 'leader' %}/leader_dashboard{% elif role == 'member' %}/member_dashboard{% else %}/home{% endif %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/make_payment">Make Payment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section text-white d-flex align-items-center justify-content-center position-relative text-center">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1 class="display-4 fw-bold mb-3 dwcra-heading">Empowering Rural Women, Building Futures.</h1>
+            <p class="lead mb-4 dwcra-subheading">
+                Your digital gateway to financial independence and community growth.<br>
+                Discover transparent loan management, apply with ease, and secure your tomorrow.
+            </p>
+            <a href="/register" class="btn dwcra-cta-button btn-lg px-5 py-3">Join Our Empowered Community</a>
+        </div>
+    </section>
+
+    <!-- User Guide Section - moved below hero-section and above How DWCRA Empowers You -->
+    <section class="user-guide-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="user-guide-card">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-book-open user-guide-icon me-3"></i>
+                                    <div>
+                                        <h2 class="h3 fw-bold text-primary mb-1">📖 {{ translations.user_guide_title|default('Complete User Guide') }}</h2>
+                                        <p class="text-muted mb-0">{{ translations.user_guide_subtitle|default('Step-by-step instructions for all DWCRA system users') }}</p>
+                                    </div>
+                                </div>
+                                <p class="mb-3">
+                                    {{ translations.user_guide_description|default('Whether you\'re a Group Leader, Group Member, or Administrator, this comprehensive guide will help you navigate the DWCRA system efficiently. Learn how to register, login, manage groups, apply for loans, make payments, and more.') }}
+                                </p>
+                                
+                                <div class="user-guide-features">
+                                    <h5 class="fw-bold text-primary mb-3">{{ translations.whats_included|default('What\'s Included:') }}</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="user-guide-feature-item">
+                                                <i class="fas fa-user-plus"></i>
+                                                <span>{{ translations.registration_process|default('New User Registration Process') }}</span>
+                                            </div>
+                                            <div class="user-guide-feature-item">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                                <span>{{ translations.login_steps|default('Login & Authentication Steps') }}</span>
+                                            </div>
+                                            <div class="user-guide-feature-item">
+                                                <i class="fas fa-users"></i>
+                                                <span>{{ translations.group_management|default('Group Management (Leaders)') }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="user-guide-feature-item">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                <span>{{ translations.payment_processing|default('Payment Processing (Members)') }}</span>
+                                            </div>
+                                            <div class="user-guide-feature-item">
+                                                <i class="fas fa-cog"></i>
+                                                <span>{{ translations.system_admin|default('System Administration') }}</span>
+                                            </div>
+                                            <div class="user-guide-feature-item">
+                                                <i class="fas fa-question-circle"></i>
+                                                <span>{{ translations.troubleshooting|default('Troubleshooting Guide') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-file-pdf" style="font-size: 4rem; color: #dc3545;"></i>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <a href="/static/dwcra_user_guide_english.pdf" class="user-guide-btn" target="_blank">
+                                        <i class="fas fa-book-open me-2"></i>View English Guide
+                                    </a>
+                                    <a href="/static/dwcra_user_guide_telugu.pdf" class="user-guide-btn" target="_blank" style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);">
+                                        <i class="fas fa-language me-2"></i>View Telugu Guide
+                                    </a>
+                                </div>
+                                <p class="text-muted mt-2 small">{{ translations.guide_format|default('HTML Format • Complete Guide') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container my-5 py-5 text-center">
+        <h2 class="display-5 fw-bold mb-5 text-primary">How DWCRA Empowers You</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-feature-card">
+                    <div class="card-body">
+                        <img src="https://png.pngtree.com/png-vector/20230428/ourmid/pngtree-process-flat-icon-vector-png-image_6738475.png" alt="Transparent Processes Icon" class="mb-3 feature-icon">
+                        <h3 class="h5 fw-bold text-success">Transparent Processes</h3>
+                        <p class="card-text text-muted"> DWCRA ensures every loan detail is clear and easily accessible, fostering trust and confidence through openness in application tracking, approval, and repayment steps for rural women.
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-feature-card">
+                    <div class="card-body">
+                        <img src="https://images.news18.com/telugu/uploads/2025/03/ondc-9-2025-03-16811b66af917fd9fcd7a259fd155531-3x2.jpg?im=FitAndFill,width=1200,height=675" alt="Digital Convenience Icon" class="mb-3 feature-icon">
+                        <h3 class="h5 fw-bold text-info">Digital Convenience</h3>
+                        <p class="card-text text-muted">With DWCRA's online portal, women can apply, manage, and monitor loans anytime, eliminating paperwork and travel, and enabling digital access to financial services in remote villages.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-feature-card">
+                    <div class="card-body">
+                        <img src="https://images.news18.com/telugu/uploads/2024/12/HYP_4859426_dwakra_women_Ke_Pr_4417_Eas_2.jpg" alt="Financial Growth Icon" class="mb-3 feature-icon">
+                        <h3 class="h5 fw-bold text-warning">Financial Growth</h3>
+                        <p class="card-text text-muted">DWCRA enables rural women to become financially independent by offering accessible group loans that help start small businesses, boost income, and improve their standard of living.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-feature-card">
+                    <div class="card-body">
+                        <img src="https://www.sakshi.com/styles/webp/s3/article_images/2023/05/21/DWCRA.jpg.webp?itok=VQH_SEsG" alt="Community Support Icon" class="mb-3 feature-icon">
+                        <h3 class="h5 fw-bold text-purple">Community Support</h3>
+                        <p class="card-text text-muted"> DWCRA builds strong networks of women who support, mentor, and inspire each other, fostering a sense of unity, empowerment, and shared progress within rural communities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container my-5 py-5 text-center">
+        <h2 class="display-5 fw-bold mb-5 text-success">Our Impact Stories</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-story-card">
+                    <img src="https://media.istockphoto.com/id/1016688012/photo/woman-weaves-fabric-on-a-traditional-loom.jpg?s=612x612&w=0&k=20&c=6JXkqMMpNjf4qfXNvwrYE61ZXGMkUfD04aNVVfVdDBg=" class="card-img-top mx-auto mt-3 rounded-circle border border-warning border-3" alt="Rani Devi">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5 fw-bold text-dark mt-3">Rani Devi, Weaver</h3>
+                        <p class="card-text text-muted fst-italic">"Thanks to DWCRA, I expanded my weaving business and now employ two other women from my village."</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-story-card">
+                    <img src="https://images.pexels.com/photos/20238488/pexels-photo-20238488/free-photo-of-farmer-distributing-fertilizer-in-india.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="card-img-top mx-auto mt-3 rounded-circle border border-success border-3" alt="Laxmi Bai">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5 fw-bold text-dark mt-3">Lakshmi, Farmer</h3>
+                        <p class="card-text text-muted fst-italic">"The loan helped me buy better seeds, and my harvest doubled this year. My family's life has improved greatly."</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 dwcra-story-card">
+                    <img src="https://fashionista.com/.image/t_share/MTUxOTUyNDUxNjYwOTQ4OTA3/nest-handworker-economy.jpg" class="card-img-top mx-auto mt-3 rounded-circle border border-info border-3" alt="Priya Singh">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5 fw-bold text-dark mt-3">Lakshmi Priya, Artisan</h3>
+                        <p class="card-text text-muted fst-italic">"I finally had the capital to buy raw materials for my pottery. The portal was so easy to use!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="#" class="btn btn-outline-primary btn-lg mt-5 dwcra-view-all">View All Success Stories</a>
+    </section>
+
+    <section class="bg-primary text-white py-5 text-center">
+        <div class="container">
+            <h2 class="display-6 fw-bold mb-3">Ready to Transform Your Life?</h2>
+            <p class="lead mb-4">Join thousands of empowered women improving their lives through DWCRA.</p>
+            <a href="/register" class="btn btn-warning btn-lg px-5 py-3 dwcra-cta-button">Apply Now!</a>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white-50 py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 DWCRA Portal. All rights reserved.</p>
+            <nav class="nav justify-content-center mt-2">
+                <a class="nav-link text-white-50" href="#">Privacy Policy</a>
+                <a class="nav-link text-white-50" href="#">Terms of Service</a>
+                <a class="nav-link text-white-50" href="#">Contact Us</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

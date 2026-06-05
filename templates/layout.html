@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DWCRA Portal{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5; /* A slightly softer light background */
+            color: #333; /* Default text color */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            display: flex;
+            flex-direction: column; /* For sticky footer */
+        }
+
+        .container {
+            flex: 1; /* Allows content to push footer down */
+        }
+
+        /* Custom Navbar Styles (updated for .dwcra-navbar) */
+        .dwcra-navbar {
+            background: linear-gradient(90deg, #3F51B5 0%, #2196F3 100%); /* Blue gradient from previous designs */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            padding: 1rem 0; /* More vertical padding */
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .dwcra-logo-text {
+            font-size: 1.8rem; /* Larger brand text */
+            font-weight: 700;
+            color: #fff !important; /* Ensure brand text is white */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Subtle text shadow for logo */
+        }
+
+        .navbar-brand-img {
+            height: 50px; /* Updated height */
+            width: 50px; /* Updated width */
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #FFC107; /* Added amber accent border */
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5); /* Added subtle glow */
+            margin-right: 12px; /* Retained from previous design */
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important; /* Lighter white for links */
+            font-weight: 500;
+            padding: 0.75rem 1rem !important; /* Consistent padding */
+            border-radius: 8px; /* Slightly rounded links */
+            transition: all 0.3s ease;
+            margin: 0 0.5rem; /* Space between links */
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff !important; /* Pure white on hover/active */
+            background-color: rgba(255, 255, 255, 0.15); /* Subtle highlight */
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+        .dropdown-menu {
+            background-color: #3f51b5;
+        }
+
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Avatar in Navbar */
+        .avatar {
+            width: 40px; /* Slightly larger avatar */
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.7); /* White border around avatar */
+            transition: all 0.3s ease;
+        }
+        .avatar:hover {
+            border-color: #fff; /* Solid white border on hover */
+            transform: scale(1.05); /* Slight scale up */
+        }
+
+        /* Flash Messages */
+        .alert-container {
+            margin-top: 2rem; /* Space from navbar */
+            margin-bottom: -1rem; /* Adjust negative margin if needed to align better with card headers */
+        }
+        .alert {
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+        }
+        .alert-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+        .alert-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+
+        /* Footer Styles */
+        .footer-custom {
+            background-color: #3f51b5; /* Primary blue for footer */
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem 0;
+            margin-top: 3rem; /* Space above footer */
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            text-align: center;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark dwcra-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNA6XUOGgfbKWj6ejiYD8fhXc_cQAPt1hwlg&s"
+                     alt="DWCRA Logo" class="navbar-brand-img me-2">
+                <span class="fw-bold dwcra-logo-text">{{ translations.portal_title }}</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                    {% if user_logged_in %}
+                        {% if unique_id == 'ADMIN001' %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/admin_dashboard' %}active{% endif %}" href="/admin_dashboard">Admin Dashboard</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/home' %}active{% endif %}" href="/home">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'dashboard' in request.path %}active{% endif %}" href="{% if role == 'leader' %}/leader_dashboard{% elif role == 'member' %}/member_dashboard{% else %}/home{% endif %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/make_payment' %}active{% endif %}" href="/make_payment">Make Payment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/profile' %}active{% endif %}" href="/profile">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                        <li class="nav-item ms-lg-3">
+                            {% if user_name %}
+                            <img src="https://ui-avatars.com/api/?name={{ user_name | urlencode }}&background=2196F3&color=fff&bold=true" alt="User Avatar" class="avatar">
+                            {% else %}
+                            <img src="https://ui-avatars.com/api/?name=User&background=2196F3&color=fff&bold=true" alt="User Avatar" class="avatar">
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('home') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/register' %}active{% endif %}" href="{{ url_for('register') }}">Register</a>
+                        </li>
+                    {% endif %}
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-translate" viewBox="0 0 16 16">
+                                <path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286H4.545zm1.634-.736L5.5 3.956h-.049l-.679 2.022H6.18z"/>
+                                <path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2zm7.138 9.995c.193.301.402.583.63.846-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.833 1.482.105-.23.372-.65.549-.864-1.063-.29-1.99-.719-2.73-1.282.228-.263.436-.544.63-.846h.853v-.928h-.853l-.853-.924h.853v-.928h-.853l.853-1.848h-.853L8 6.311v.928H7.142v.928H8v.928H7.142L8 11.072h.138z"/>
+                            </svg>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item" href="/language/en">English</a></li>
+                            <li><a class="dropdown-item" href="/language/te">Telugu</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer-custom">
+        <div class="container text-center">
+            &copy; {{ "2025" if now.year == 2025 else "2025-" + now.year|string }} DWCRA Portal. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

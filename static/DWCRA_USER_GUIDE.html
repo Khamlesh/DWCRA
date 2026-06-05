@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DWCRA System - Complete User Guide</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #3F51B5 0%, #5C6BC0 100%);
+            color: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        .section h2 {
+            color: #3F51B5;
+            border-bottom: 2px solid #3F51B5;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #5C6BC0;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #3F51B5;
+            border-radius: 5px;
+        }
+        .step-number {
+            font-weight: bold;
+            color: #3F51B5;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .user-type {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+        .user-type h4 {
+            margin: 0 0 10px 0;
+            color: #1976D2;
+        }
+        .troubleshooting {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #FF9800;
+        }
+        .troubleshooting h3 {
+            color: #E65100;
+            margin-top: 0;
+        }
+        .problem {
+            font-weight: bold;
+            color: #D84315;
+        }
+        .solution {
+            margin-left: 20px;
+            color: #424242;
+        }
+        .requirements {
+            background: #f1f8e9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .requirements h3 {
+            color: #2E7D32;
+            margin-top: 0;
+        }
+        .contact {
+            background: #fce4ec;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #E91E63;
+            text-align: center;
+        }
+        .contact h3 {
+            color: #C2185B;
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3F51B5;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            body {
+                font-size: 12px;
+            }
+            .header {
+                page-break-after: avoid;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>DWCRA System</h1>
+        <p>Complete User Guide - Step-by-Step Instructions</p>
+        <p>Development of Women and Children in Rural Areas</p>
+    </div>
+
+    <div class="section">
+        <h2>📋 Table of Contents</h2>
+        <ol>
+            <li><a href="#overview">System Overview</a></li>
+            <li><a href="#access">Accessing the System</a></li>
+            <li><a href="#registration">New User Registration</a></li>
+            <li><a href="#login">User Login Process</a></li>
+            <li><a href="#leader">Group Leader Workflow</a></li>
+            <li><a href="#member">Group Member Workflow</a></li>
+            <li><a href="#admin">Administrator Workflow</a></li>
+            <li><a href="#profile">Profile Management</a></li>
+            <li><a href="#logout">Logout Process</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ol>
+    </div>
+
+    <div class="section" id="overview">
+        <h2>🎯 System Overview</h2>
+        <p>The DWCRA (Development of Women and Children in Rural Areas) System is a comprehensive web-based platform designed to manage self-help groups, loans, and payments. The system supports three main user roles:</p>
+        
+        <div class="user-type">
+            <h4>👥 Group Leaders</h4>
+            <p>Manage groups and apply for loans on behalf of their members.</p>
+        </div>
+        
+        <div class="user-type">
+            <h4>👤 Group Members</h4>
+            <p>Make payments and track payment history for their group loans.</p>
+        </div>
+        
+        <div class="user-type">
+            <h4>🔧 Administrators</h4>
+            <p>Oversee the entire system, manage users, and approve loans.</p>
+        </div>
+    </div>
+
+    <div class="section" id="access">
+        <h2>🚀 Accessing the System</h2>
+        
+        <div class="step">
+            <span class="step-number">Step 1:</span> Open your web browser (Chrome recommended)
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 2:</span> Navigate to the DWCRA system URL provided by your organization
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 3:</span> The system will display the login page
+        </div>
+        
+        <h3>Language Selection (Optional)</h3>
+        <ul>
+            <li>The system supports multiple languages (English and Telugu)</li>
+            <li>Click on the language toggle button to switch between languages</li>
+            <li>Your language preference will be saved for future sessions</li>
+        </ul>
+    </div>
+
+    <div class="section" id="registration">
+        <h2>📝 New User Registration</h2>
+        
+        <div class="step">
+            <span class="step-number">Step 1:</span> On the login page, click the <strong>"New User? Register Here"</strong> link
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 2:</span> Complete the registration form with all required fields
+        </div>
+        
+        <h3>Required Registration Fields</h3>
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Description</th>
+                <th>Requirements</th>
+            </tr>
+            <tr>
+                <td><strong>Unique ID</strong></td>
+                <td>Your assigned identification number</td>
+                <td>Must be unique in the system</td>
+            </tr>
+            <tr>
+                <td><strong>Full Name</strong></td>
+                <td>Complete name as per official documents</td>
+                <td>Use proper capitalization</td>
+            </tr>
+            <tr>
+                <td><strong>Email Address</strong></td>
+                <td>Valid email for notifications</td>
+                <td>Format: example@domain.com</td>
+            </tr>
+            <tr>
+                <td><strong>Bank Name</strong></td>
+                <td>Your bank branch name</td>
+                <td>Must match other group members</td>
+            </tr>
+            <tr>
+                <td><strong>Password</strong></td>
+                <td>Create a strong password</td>
+                <td>Minimum 8 characters</td>
+            </tr>
+            <tr>
+                <td><strong>Role</strong></td>
+                <td>Select your role</td>
+                <td>Group Leader or Group Member</td>
+            </tr>
+        </table>
+        
+        <div class="step">
+            <span class="step-number">Step 3:</span> Click the <strong>"Register"</strong> button (green button)
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 4:</span> Complete identity verification in your Profile section
+        </div>
+    </div>
+
+    <div class="section" id="login">
+        <h2>🔐 User Login Process</h2>
+        
+        <div class="step">
+            <span class="step-number">Step 1:</span> Enter your <strong>Unique ID</strong> (case-sensitive)
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 2:</span> Enter your <strong>Password</strong> (case-sensitive)
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 3:</span> Click <strong>"Secure Login"</strong> button (blue button)
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 4:</span> System redirects to your role-specific dashboard
+        </div>
+        
+        <h3>Password Recovery</h3>
+        <ul>
+            <li>Click <strong>"Forgot Password?"</strong> link on login page</li>
+            <li>Enter your registered email address</li>
+            <li>Check email for password reset instructions</li>
+            <li>Follow the link to create a new password</li>
+        </ul>
+    </div>
+
+    <div class="section page-break" id="leader">
+        <h2>👥 Group Leader Workflow</h2>
+        
+        <h3>Dashboard Access</h3>
+        <ul>
+            <li>URL: <code>/leader_dashboard</code></li>
+            <li>Welcome message: "Welcome, [Name] (Group Leader)"</li>
+            <li>Four main action buttons displayed</li>
+        </ul>
+        
+        <h3>Step 1: Identity Verification (First Time)</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Profile"</strong> button (amber/yellow button)
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Upload required documents:
+            <ul>
+                <li>Government ID</li>
+                <li>Address proof</li>
+                <li>Bank account details</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Submit for administrator approval
+        </div>
+        <div class="step">
+            <span class="step-number">4.</span> Wait for approval notification
+        </div>
+        
+        <h3>Step 2: Create Group</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Create Group"</strong> button (blue button)
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Enter 6 member Unique IDs:
+            <ul>
+                <li>Member 1, Member 2, Member 3</li>
+                <li>Member 4, Member 5, Member 6</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Ensure all members:
+            <ul>
+                <li>Are registered in the system</li>
+                <li>Have verified their identity</li>
+                <li>Belong to the same bank as the leader</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">4.</span> Click <strong>"Create Group"</strong> to submit
+        </div>
+        
+        <h3>Step 3: Apply for Loan</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Apply for Loan"</strong> button (green button)
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Fill loan application:
+            <ul>
+                <li>Loan Amount</li>
+                <li>Purpose</li>
+                <li>Repayment Period</li>
+                <li>Supporting Documents</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Click <strong>"Submit Application"</strong>
+        </div>
+        <div class="step">
+            <span class="step-number">4.</span> Status: "Pending Approval"
+        </div>
+    </div>
+
+    <div class="section" id="member">
+        <h2>👤 Group Member Workflow</h2>
+        
+        <h3>Dashboard Access</h3>
+        <ul>
+            <li>URL: <code>/member_dashboard</code></li>
+            <li>Welcome message: "Welcome, [Name] (Group Member)"</li>
+            <li>Four main action buttons displayed</li>
+        </ul>
+        
+        <h3>Step 1: Identity Verification (First Time)</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Profile"</strong> button (amber/yellow button)
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Upload required documents
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Submit for administrator approval
+        </div>
+        <div class="step">
+            <span class="step-number">4.</span> Wait for approval notification
+        </div>
+        
+        <h3>Step 2: Make Payment</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Make Payment"</strong> button (green button)
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Fill payment form:
+            <ul>
+                <li>Payment Amount</li>
+                <li>Payment Method</li>
+                <li>Transaction Reference</li>
+                <li>Additional Notes (optional)</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Click <strong>"Submit Payment"</strong>
+        </div>
+        <div class="step">
+            <span class="step-number">4.</span> Payment recorded in system
+        </div>
+        
+        <h3>Step 3: View Payment History</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Payment History"</strong> button (cyan/blue button)
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> View all payments:
+            <ul>
+                <li>Payment dates</li>
+                <li>Amounts paid</li>
+                <li>Payment status</li>
+                <li>Transaction references</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section page-break" id="admin">
+        <h2>🔧 Administrator Workflow</h2>
+        
+        <h3>Dashboard Access</h3>
+        <ul>
+            <li>URL: <code>/admin_dashboard</code></li>
+            <li>Full navigation menu available</li>
+            <li>System analytics displayed</li>
+        </ul>
+        
+        <h3>Step 1: User Management</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Users"</strong> in navigation
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Available actions:
+            <ul>
+                <li><strong>Create User:</strong> Add new users</li>
+                <li><strong>Edit User:</strong> Modify user information</li>
+                <li><strong>Delete User:</strong> Remove users</li>
+                <li><strong>Reset Password:</strong> Generate new passwords</li>
+            </ul>
+        </div>
+        
+        <h3>Step 2: Identity Verification Management</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Identity Verifications"</strong>
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Available actions:
+            <ul>
+                <li><strong>Approve:</strong> Accept verification</li>
+                <li><strong>Reject:</strong> Deny with reason</li>
+                <li><strong>View Documents:</strong> Review uploaded files</li>
+            </ul>
+        </div>
+        
+        <h3>Step 3: Loan Management</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Loans"</strong> in navigation
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Available actions:
+            <ul>
+                <li><strong>Approve Loan:</strong> Accept application</li>
+                <li><strong>Reject Loan:</strong> Deny with reason</li>
+                <li><strong>Edit Loan:</strong> Modify details</li>
+                <li><strong>View Details:</strong> Full application</li>
+            </ul>
+        </div>
+        
+        <h3>Step 4: Reports Generation</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Reports"</strong> in navigation
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Report types:
+            <ul>
+                <li>User Activity Reports</li>
+                <li>Payment Reports</li>
+                <li>Loan Status Reports</li>
+                <li>Group Performance Reports</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Select date range and click <strong>"Generate Report"</strong>
+        </div>
+    </div>
+
+    <div class="section" id="profile">
+        <h2>👤 Profile Management</h2>
+        
+        <h3>Accessing Profile</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Profile"</strong> button from dashboard
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> URL: <code>/profile</code>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> View current profile information
+        </div>
+        
+        <h3>Updating Personal Information</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Click <strong>"Edit Profile"</strong> button
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Editable fields:
+            <ul>
+                <li>Full Name</li>
+                <li>Email Address</li>
+                <li>Bank Name</li>
+                <li>Contact Information</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Click <strong>"Save Changes"</strong>
+        </div>
+        
+        <h3>Identity Verification</h3>
+        <div class="step">
+            <span class="step-number">1.</span> Upload required documents:
+            <ul>
+                <li>Government-issued ID</li>
+                <li>Address proof</li>
+                <li>Bank account details</li>
+            </ul>
+        </div>
+        <div class="step">
+            <span class="step-number">2.</span> Click <strong>"Submit for Verification"</strong>
+        </div>
+        <div class="step">
+            <span class="step-number">3.</span> Status: "Pending Approval"
+        </div>
+    </div>
+
+    <div class="section" id="logout">
+        <h2>🚪 Logout Process</h2>
+        
+        <div class="step">
+            <span class="step-number">Step 1:</span> Click <strong>"Logout"</strong> button from dashboard
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 2:</span> System automatically logs out
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 3:</span> Redirected to login page
+        </div>
+        
+        <div class="step">
+            <span class="step-number">Step 4:</span> Session securely terminated
+        </div>
+        
+        <h3>Security Features</h3>
+        <ul>
+            <li>All session data cleared</li>
+            <li>No personal information remains in browser</li>
+            <li>Must log in again to access system</li>
+        </ul>
+    </div>
+
+    <div class="section troubleshooting" id="troubleshooting">
+        <h3>🔧 Troubleshooting Guide</h3>
+        
+        <h4>Login Issues</h4>
+        <p class="problem">Problem: "Invalid credentials" error</p>
+        <div class="solution">
+            <ol>
+                <li>Check Unique ID spelling</li>
+                <li>Verify password (case-sensitive)</li>
+                <li>Try password reset if forgotten</li>
+            </ol>
+        </div>
+        
+        <p class="problem">Problem: Account locked</p>
+        <div class="solution">
+            <ol>
+                <li>Contact administrator</li>
+                <li>Verify identity if required</li>
+                <li>Reset password if necessary</li>
+            </ol>
+        </div>
+        
+        <h4>Registration Issues</h4>
+        <p class="problem">Problem: "Unique ID already exists"</p>
+        <div class="solution">
+            <ol>
+                <li>Contact administrator</li>
+                <li>Verify Unique ID assignment</li>
+                <li>Use different email if needed</li>
+            </ol>
+        </div>
+        
+        <h4>Payment Issues</h4>
+        <p class="problem">Problem: Payment not processing</p>
+        <div class="solution">
+            <ol>
+                <li>Check internet connection</li>
+                <li>Verify payment details</li>
+                <li>Contact administrator</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section requirements">
+        <h3>📋 System Requirements</h3>
+        
+        <h4>Browser Compatibility</h4>
+        <ul>
+            <li><strong>Google Chrome</strong> (recommended)</li>
+            <li><strong>Mozilla Firefox</strong></li>
+            <li><strong>Microsoft Edge</strong></li>
+            <li><strong>Safari</strong> (Mac)</li>
+        </ul>
+        
+        <h4>Internet Requirements</h4>
+        <ul>
+            <li>Stable internet connection</li>
+            <li>Minimum 1 Mbps download speed</li>
+            <li>Reliable connection for payments</li>
+        </ul>
+        
+        <h4>Device Requirements</h4>
+        <ul>
+            <li>Desktop, laptop, or tablet</li>
+            <li>Minimum resolution: 1024x768</li>
+            <li>JavaScript enabled</li>
+            <li>Cookies enabled</li>
+        </ul>
+    </div>
+
+    <div class="section contact">
+        <h3>📞 Contact and Support</h3>
+        <p><strong>For technical support or account issues:</strong></p>
+        <ul>
+            <li>Contact your system administrator</li>
+            <li>Provide your Unique ID when reporting issues</li>
+            <li>Include specific error messages</li>
+            <li>Describe steps to reproduce problem</li>
+        </ul>
+        
+        <p><strong>Emergency Contacts:</strong></p>
+        <ul>
+            <li>System Administrator: [Contact Information]</li>
+            <li>Technical Support: [Contact Information]</li>
+            <li>Security Issues: [Contact Information]</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>📊 Quick Reference Summary</h2>
+        
+        <h3>User Types & Access</h3>
+        <table>
+            <tr>
+                <th>User Type</th>
+                <th>Dashboard</th>
+                <th>Main Functions</th>
+            </tr>
+            <tr>
+                <td><strong>Group Leader</strong></td>
+                <td><code>/leader_dashboard</code></td>
+                <td>Create groups, Apply loans</td>
+            </tr>
+            <tr>
+                <td><strong>Group Member</strong></td>
+                <td><code>/member_dashboard</code></td>
+                <td>Make payments, View history</td>
+            </tr>
+            <tr>
+                <td><strong>Administrator</strong></td>
+                <td><code>/admin_dashboard</code></td>
+                <td>Manage system, Approve requests</td>
+            </tr>
+        </table>
+        
+        <h3>Required Steps for New Users</h3>
+        <ol>
+            <li>✅ Register account</li>
+            <li>✅ Complete identity verification</li>
+            <li>✅ Wait for administrator approval</li>
+            <li>✅ Access role-specific features</li>
+        </ol>
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; padding: 20px; border-top: 2px solid #3F51B5;">
+        <p><strong>This guide covers all aspects of the DWCRA system from initial access to logout.</strong></p>
+        <p><em>For additional support or questions, please contact your system administrator.</em></p>
+        <p style="color: #666; font-size: 0.9em;">© 2025 DWCRA Portal. All rights reserved.</p>
+    </div>
+</body>
+</html> 

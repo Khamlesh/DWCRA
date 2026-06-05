@@ -1,0 +1,20 @@
+{
+    "portal_title": "DWCRA Portal",
+    "register_account": "Register for an Account",
+    "unique_id": "Unique ID",
+    "full_name": "Full Name",
+    "email_address": "Email Address",
+    "password": "Password",
+    "bank_name": "Bank Name",
+    "role": "Role",
+    "select_role": "Select your role...",
+    "group_leader": "Group Leader",
+    "group_member": "Group Member",
+    "admin": "Admin",
+    "register_button": "Register Account",
+    "already_have_account": "Already have an account? Login here",
+    "login_to_dwcra": "Login to DWCRA",
+    "secure_login": "Secure Login",
+    "new_user_register": "New user? Register here",
+    "forgot_password": "Forgot password?"
+} 

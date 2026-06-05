@@ -1,0 +1,211 @@
+{% extends "layout.html" %}
+
+{% block title %}DWCRA Portal - Make Payment{% endblock %}
+
+{% block head %}
+    <style>
+        /* Specific styles for Make Payment page */
+        .payment-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Consistent card shadow */
+            overflow: hidden;
+            max-width: 600px; /* Limit width for a focused form */
+            margin: auto; /* Center the card horizontally */
+            margin-bottom: 2.5rem; /* Space before back button if it's outside card */
+        }
+
+        .payment-card .card-header {
+            background: linear-gradient(135deg, #3F51B5 0%, #2196F3 100%); /* Blue gradient header */
+            color: #fff;
+            padding: 1.5rem 2rem;
+            border-bottom: none;
+        }
+
+        .payment-card .card-header h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0;
+        }
+
+        .payment-card .card-body {
+            padding: 2rem;
+            background-color: #fff;
+        }
+
+        /* Payment details text styling */
+        .payment-details strong {
+            color: #3F51B5; /* Highlight labels with primary color */
+            font-weight: 700;
+        }
+        .payment-details p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Form control styling consistent with other forms */
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-select:focus {
+            border-color: #3F51B5;
+            box-shadow: 0 0 0 0.25rem rgba(63, 81, 181, 0.25);
+        }
+
+        /* Payment logos grid */
+        .payment-logos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Flexible grid for logos */
+            gap: 15px; /* Space between logos */
+            padding: 1rem 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1.5rem;
+            justify-items: center; /* Center logos within their grid cells */
+            align-items: center; /* Vertically align logos */
+        }
+
+        .pay-logo {
+            max-width: 80px; /* Max width for logos */
+            max-height: 40px; /* Max height for logos */
+            object-fit: contain; /* Ensure logos fit without distortion */
+            filter: grayscale(80%); /* Subtle grayscale */
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        .pay-logo:hover {
+            filter: grayscale(0%); /* Color on hover */
+            opacity: 1;
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        /* Pay Now Button */
+        .btn-pay-now {
+            background-color: #4CAF50 !important; /* Success green for pay action */
+            border-color: #4CAF50 !important;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+            width: 100%; /* Make button full width */
+        }
+
+        .btn-pay-now:hover {
+            background-color: #43A047 !important;
+            border-color: #43A047 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Back Button */
+        .btn-back-payment {
+            background-color: #6c757d; /* Standard secondary gray */
+            border-color: #6c757d;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2);
+            display: block; /* Make it a block button */
+            width: fit-content; /* Adjust width to content */
+            margin: 20px auto 0 auto; /* Center it below the card */
+        }
+
+        .btn-back-payment:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            {% if payment_methods is not defined %}
+                <div class="alert alert-danger text-center shadow-sm" role="alert">
+                    <h5 class="alert-heading">Access Denied!</h5>
+                    <p>You do not have access to this page or are not a group member.</p>
+                    <hr>
+                    <p class="mb-0">Please contact support if you believe this is an error.</p>
+                </div>
+            {% else %}
+            <div class="card payment-card">
+                <div class="card-header text-center">
+                    <h3 class="fw-bold">Monthly Payment</h3>
+                </div>
+
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {# Flash messages are handled by layout.html, but if you want specific placement within the card: #}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <div class="mb-4 payment-details">
+                        <p><strong>Month:</strong> {{ month }}</p>
+                        <p class="h4"><strong>Amount Due:</strong> <span class="badge bg-success">₹{{ member_share | round(2) }}</span></p>
+                    </div>
+
+                    {% if paid %}
+                        <div class="alert alert-success text-center border-0 fw-bold" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i> You have already paid for this month!
+                        </div>
+                    {% else %}
+                        <form method="POST">
+                            <div class="mb-4">
+                                <label for="payment_method" class="form-label">Select Payment Method</label>
+                                <select class="form-select" id="payment_method" name="payment_method" required>
+                                    <option value="">Choose...</option>
+                                    {% for method in payment_methods %}
+                                    <option value="{{ method }}">{{ method }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="payment-logos-grid mb-4">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/PhonePe_Logo.png" alt="PhonePe" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Google_Pay_Logo.svg" alt="GPay" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Paytm_logo.png" alt="Paytm" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Amazon_Pay_logo.svg" alt="Amazon Pay" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/BHIM_logo.svg" alt="BHIM" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/UPI-Logo-vector.svg" alt="UPI" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Debit Card" class="pay-logo">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Credit Card" class="pay-logo">
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-pay-now">Pay Now</button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="/member_dashboard" class="btn btn-back-payment">Back to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {# Add any page-specific JavaScript here if needed #}
+{% endblock %}

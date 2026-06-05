@@ -1,0 +1,8 @@
+Flask
+Flask-Login
+mysql-connector-python
+Werkzeug
+Flask-Mail
+Flask-Uploads
+python-dotenv
+itsdangerous 

@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block title %}DWCRA Portal - Create Group{% endblock %}
+
+{% block head %}
+    {# Any page-specific CSS if needed, though most should be in layout.html #}
+    <style>
+        /* Specific styles for this page's form card */
+        .group-form-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 600px; /* Slightly wider for multiple inputs */
+            margin: auto; /* Center the card */
+        }
+
+        .group-form-card .card-header {
+            background: linear-gradient(135deg, #3F51B5 0%, #2196F3 100%);
+            color: #fff;
+            padding: 1.5rem 2rem;
+            border-bottom: none;
+        }
+
+        .group-form-card .card-header h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0;
+        }
+
+        .group-form-card .card-body {
+            padding: 2rem;
+            background-color: #fff;
+        }
+
+        /* Consistent form control styling */
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3F51B5;
+            box-shadow: 0 0 0 0.25rem rgba(63, 81, 181, 0.25);
+        }
+
+        /* Button styling consistent with other pages */
+        .btn-create-group {
+            background-color: #3F51B5 !important; /* Primary color for main action */
+            border-color: #3F51B5 !important;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(63, 81, 181, 0.3);
+        }
+
+        .btn-create-group:hover {
+            background-color: #303F9F !important;
+            border-color: #303F9F !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(63, 81, 181, 0.4);
+        }
+
+        .btn-back {
+            background-color: #6c757d; /* Standard secondary gray */
+            border-color: #6c757d;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2);
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            {# Flash messages are handled in layout.html, no need to repeat here #}
+
+            <div class="card group-form-card">
+                <div class="card-header text-center">
+                    <h3 class="fw-bold">Create New Group</h3>
+                </div>
+
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label mb-2">Enter Unique IDs of 6 Members (excluding yourself):</label>
+                            {% for i in range(1, 7) %}
+                            <input type="text" class="form-control mb-3" name="member{{i}}" placeholder="Member {{i}} Unique ID" required>
+                            {% endfor %}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-create-group">Create Group</button>
+                            <a href="/leader_dashboard" class="btn btn-back">Back to Dashboard</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {# Any page-specific JavaScript here if needed #}
+{% endblock %}

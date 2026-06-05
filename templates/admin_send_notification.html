@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Notification - DWCRA Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Open Sans', sans-serif; background-color: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #3F51B5 0%, #5C6BC0 100%); }
+        .card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/admin_dashboard">
+                <i class="fas fa-tachometer-alt me-2"></i>DWCRA Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/admin_dashboard">Dashboard</a>
+                <a class="nav-link" href="/admin/users">Users</a>
+                <a class="nav-link" href="/admin/groups">Groups</a>
+                <a class="nav-link" href="/admin/loans">Loans</a>
+                <a class="nav-link" href="/admin/reports">Reports</a>
+                <a class="nav-link active" href="/admin/notifications">Notifications</a>
+                <a class="nav-link" href="/admin/audit-logs">Audit Logs</a>
+                <a class="nav-link" href="/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-bell me-2"></i>Send Notification</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label class="form-label">Subject *</label>
+                                <input type="text" class="form-control" name="subject" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Message *</label>
+                                <textarea class="form-control" name="message" rows="5" required></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Notification Type *</label>
+                                <select class="form-select" name="notification_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="info">Information</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="success">Success</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Recipient *</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="recipient_type" value="all" checked>
+                                    <label class="form-check-label">All Users</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="recipient_type" value="specific">
+                                    <label class="form-check-label">Specific User</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="specificUserDiv" style="display: none;">
+                                <label class="form-label">Select User</label>
+                                <select class="form-select" name="recipient_id">
+                                    <option value="">Select User</option>
+                                    {% for user in users %}
+                                    <option value="{{ user.user_id }}">{{ user.name }} ({{ user.unique_id }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="/admin/notifications" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i>Back to Notifications
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-1"></i>Send Notification
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('input[name="recipient_type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const specificUserDiv = document.getElementById('specificUserDiv');
+                if (this.value === 'specific') {
+                    specificUserDiv.style.display = 'block';
+                } else {
+                    specificUserDiv.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
