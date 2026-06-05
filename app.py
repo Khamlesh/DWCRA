@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_file
 from flask_login import LoginManager, login_user, login_required, logout_user, UserMixin, current_user
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,6 +11,10 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from decimal import Decimal
 import re
 import time
+import csv
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -250,30 +254,57 @@ def leader_dashboard():
     group_status = None
     group_payment_data = None
     progress = 0
+    group_members = []
     if group:
-        cursor.execute('SELECT u.name, u.email, u.user_id FROM group_members gm JOIN users u ON gm.user_id = u.user_id WHERE gm.group_id = %s', (group['group_id'],))
+        cursor.execute('SELECT u.name, u.email, u.user_id, u.unique_id FROM group_members gm JOIN users u ON gm.user_id = u.user_id WHERE gm.group_id = %s', (group['group_id'],))
         members = cursor.fetchall()
-        group_status = {
-            'group_id': group['group_id'],
-            'members': [m['name'] for m in members]
-        }
+        if members:
+            group_status = {
+                'group_id': group['group_id'],
+                'members': [m['name'] for m in members],
+                'count': len(members)
+            }
         cursor.execute('SELECT * FROM loans WHERE group_id = %s', (group['group_id'],))
         loan = cursor.fetchone()
+        for m in members:
+            member_record = {
+                'user_id': m['user_id'],
+                'name': m['name'],
+                'email': m['email'],
+                'unique_id': m['unique_id'],
+                'paid_count': 0,
+                'last_paid': None,
+                'verification_status': 'Not Verified',
+                'status': 'No Loan'
+            }
+            cursor.execute('SELECT verification_status FROM identity_verification WHERE user_id = %s', (m['user_id'],))
+            verification = cursor.fetchone()
+            if verification and verification.get('verification_status'):
+                member_record['verification_status'] = verification['verification_status'].title()
+            group_members.append(member_record)
         if loan:
             start_date = loan['start_date']
             months_passed = (datetime.now().year - start_date.year) * 12 + (datetime.now().month - start_date.month) + 1
-            for m in members:
-                cursor.execute('SELECT * FROM payments WHERE user_id = %s AND loan_id = %s AND month = %s AND year = %s',
-                               (m['user_id'], loan['loan_id'], months_passed, datetime.now().year))
-                payment = cursor.fetchone()
-                if not payment or payment['status'] != 'paid':
+            for m in group_members:
+                cursor.execute('SELECT COUNT(*) as paid_count, MAX(paid_on) as last_paid FROM payments WHERE user_id = %s AND loan_id = %s AND status = %s',
+                               (m['user_id'], loan['loan_id'], 'paid'))
+                payment_summary = cursor.fetchone()
+                paid_count = payment_summary['paid_count'] if payment_summary else 0
+                m['paid_count'] = paid_count
+                m['last_paid'] = payment_summary['last_paid'] if payment_summary else None
+                m['status'] = 'Paid' if paid_count >= months_passed and months_passed <= 12 else 'Pending'
+                if not m['last_paid']:
+                    m['status'] = 'Pending'
+                if m['user_id'] == current_user.id:
+                    m['status'] = 'Leader'
+                if not m['last_paid'] and months_passed > 0:
                     try:
                         send_email(m['email'], 'DWCRA Loan Payment Reminder', f'Dear {m["name"]},\nYour monthly loan payment for month {months_passed} is due. Please log in and pay as soon as possible.')
                     except Exception:
                         pass
             # Group payment completion data for chart
             group_payment_data = {'labels': [], 'datasets': []}
-            for m in members:
+            for m in group_members:
                 cursor.execute('SELECT month, year, status FROM payments WHERE user_id = %s AND loan_id = %s ORDER BY year, month', (m['user_id'], loan['loan_id']))
                 payments = cursor.fetchall()
                 paid_months = [0]*12
@@ -290,11 +321,73 @@ def leader_dashboard():
         'leader_dashboard.html',
         name=current_user.name,
         group_status=group_status,
+        group_members=group_members,
         group_payment_data=json.dumps(group_payment_data) if group_payment_data else None,
         progress=progress,
         role=current_user.role,
         user_name=current_user.name
     )
+
+@app.route('/leader/group_members_pdf')
+@login_required
+def leader_group_members_pdf():
+    if current_user.role != 'leader':
+        return redirect(url_for('member_dashboard'))
+
+    db_conn, db_cursor = get_db()
+    try:
+        db_cursor.execute('SELECT * FROM `groups` WHERE leader_id = %s', (current_user.id,))
+        group = db_cursor.fetchone()
+        if not group:
+            flash('You do not have an active group to export.', 'danger')
+            return redirect(url_for('leader_dashboard'))
+
+        db_cursor.execute('SELECT u.name, u.email, u.unique_id, u.user_id FROM group_members gm JOIN users u ON gm.user_id = u.user_id WHERE gm.group_id = %s', (group['group_id'],))
+        members = db_cursor.fetchall()
+
+        output = BytesIO()
+        pdf = canvas.Canvas(output, pagesize=letter)
+        pdf.setTitle(f'Group_{group["group_id"]}_Members')
+
+        pdf.setFont('Helvetica-Bold', 16)
+        pdf.drawString(50, 760, f'DWCRA Group Members Report - Group {group["group_id"]}')
+        pdf.setFont('Helvetica', 11)
+        pdf.drawString(50, 740, f'Generated by: {current_user.name}')
+        pdf.drawString(50, 725, f'Date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+
+        y = 700
+        pdf.setFont('Helvetica-Bold', 10)
+        pdf.drawString(50, y, 'Name')
+        pdf.drawString(220, y, 'Unique ID')
+        pdf.drawString(340, y, 'Email')
+        pdf.drawString(520, y, 'User ID')
+        y -= 18
+        pdf.setFont('Helvetica', 10)
+
+        for member in members:
+            if y < 80:
+                pdf.showPage()
+                y = 760
+                pdf.setFont('Helvetica-Bold', 10)
+                pdf.drawString(50, y, 'Name')
+                pdf.drawString(220, y, 'Unique ID')
+                pdf.drawString(340, y, 'Email')
+                pdf.drawString(520, y, 'User ID')
+                y -= 18
+                pdf.setFont('Helvetica', 10)
+
+            pdf.drawString(50, y, member['name'])
+            pdf.drawString(220, y, member['unique_id'])
+            pdf.drawString(340, y, member['email'])
+            pdf.drawString(520, y, str(member['user_id']))
+            y -= 16
+
+        pdf.save()
+        output.seek(0)
+        return send_file(output, as_attachment=True, download_name=f'group_{group["group_id"]}_members.pdf', mimetype='application/pdf')
+    finally:
+        db_cursor.close()
+        db_conn.close()
 
 @app.route('/member_dashboard')
 @login_required
@@ -304,33 +397,93 @@ def member_dashboard():
 
     db_conn, db_cursor = get_db()
     try:
-        # Payment history for chart
-        db_cursor.execute('SELECT month, year, amount, status, loan_id, group_id FROM payments WHERE user_id = %s ORDER BY year, month', (current_user.id,))
-        payments = db_cursor.fetchall()
+        db_cursor.execute('SELECT gm.group_id FROM group_members gm WHERE gm.user_id = %s', (current_user.id,))
+        group = db_cursor.fetchone()
 
         payment_chart = [0] * 12
-        loan_id = None
-        group_id = None
-        for p in payments:
-            if p['status'] == 'paid' and 1 <= p['month'] <= 12:
-                payment_chart[p['month'] - 1] = float(p['amount'])
-                loan_id = p['loan_id']
-                group_id = p['group_id']
-
         progress = 0
-        if loan_id and group_id:
-            db_cursor.execute('SELECT COUNT(*) as paid_count FROM payments WHERE group_id = %s AND loan_id = %s AND status = %s',
-                              (group_id, loan_id, 'paid'))
-            group_paid_count = db_cursor.fetchone()['paid_count']
-            progress = int((group_paid_count / (7 * 12)) * 100)
+        loan_schedule = []
+        amount_due = None
+        next_due_date = None
+        current_month_paid = False
+        loan_info = None
+        paid_installments = 0
+        unpaid_installments = 12
+        total_paid_amount = Decimal('0.00')
+        last_payment_date = None
+
+        if group:
+            group_id = group['group_id']
+            db_cursor.execute('SELECT * FROM loans WHERE group_id = %s', (group_id,))
+            loan = db_cursor.fetchone()
+            if loan:
+                loan_info = loan
+                total_repayment = loan['amount'] * Decimal('1.07')
+                monthly_payment = total_repayment / Decimal('12')
+                member_share = (monthly_payment / Decimal('7')).quantize(Decimal('0.01'))
+
+                start_date = loan['start_date']
+                if start_date:
+                    for idx in range(12):
+                        schedule_month = (start_date.month - 1 + idx) % 12 + 1
+                        schedule_year = start_date.year + (start_date.month - 1 + idx) // 12
+                        db_cursor.execute(
+                            'SELECT status, amount, paid_on FROM payments WHERE user_id = %s AND loan_id = %s AND month = %s AND year = %s',
+                            (current_user.id, loan['loan_id'], schedule_month, schedule_year)
+                        )
+                        payment = db_cursor.fetchone()
+                        status = payment['status'] if payment else 'pending'
+                        if status == 'paid':
+                            payment_chart[schedule_month - 1] = float(payment['amount'])
+                            paid_installments += 1
+                            unpaid_installments = max(12 - paid_installments, 0)
+                            total_paid_amount += Decimal(str(payment['amount']))
+                            if payment['paid_on']:
+                                if last_payment_date is None or payment['paid_on'] > last_payment_date:
+                                    last_payment_date = payment['paid_on']
+
+                        due_label = datetime(schedule_year, schedule_month, 1).strftime('%b %Y')
+                        loan_schedule.append({
+                            'month': due_label,
+                            'due_amount': member_share,
+                            'status': status.title(),
+                            'is_current': False
+                        })
+
+                    months_passed = (datetime.now().year - start_date.year) * 12 + (datetime.now().month - start_date.month) + 1
+                    if months_passed < 1:
+                        months_passed = 1
+                    if months_passed > 12:
+                        months_passed = 12
+
+                    loan_schedule[months_passed - 1]['is_current'] = True
+                    current_month_paid = loan_schedule[months_passed - 1]['status'].lower() == 'paid'
+                    if not current_month_paid:
+                        amount_due = loan_schedule[months_passed - 1]['due_amount']
+                        next_due_date = loan_schedule[months_passed - 1]['month']
+
+                    db_cursor.execute('SELECT COUNT(*) as paid_count FROM payments WHERE group_id = %s AND loan_id = %s AND status = %s',
+                                      (group_id, loan['loan_id'], 'paid'))
+                    group_paid_count = db_cursor.fetchone()['paid_count']
+                    progress = int((group_paid_count / (7 * 12)) * 100)
 
         return render_template(
             'member_dashboard.html',
             name=current_user.name,
-            payment_chart=json.dumps(payment_chart),
+            payment_chart=payment_chart,
+            payment_chart_json=json.dumps(payment_chart),
             progress=progress,
             role=current_user.role,
-            user_name=current_user.name
+            user_name=current_user.name,
+            loan_schedule=loan_schedule,
+            amount_due=amount_due,
+            next_due_date=next_due_date,
+            current_month_paid=current_month_paid,
+            loan_info=loan_info,
+            paid_installments=paid_installments,
+            unpaid_installments=unpaid_installments,
+            total_paid_amount=total_paid_amount,
+            last_payment_date=last_payment_date
         )
     finally:
         db_cursor.close()
@@ -431,19 +584,22 @@ def make_payment():
         # Equal repayment share across 7 members for 12 months
         total_repayment = loan['amount'] * Decimal('1.07')
         monthly_payment = total_repayment / Decimal('12')
-        member_share = monthly_payment / Decimal('7')
+        member_share = (monthly_payment / Decimal('7')).quantize(Decimal('0.01'))
 
-        # Find current month (1-12 since loan start)
         start_date = loan['start_date']
-        months_passed = (datetime.now().year - start_date.year) * 12 + (datetime.now().month - start_date.month) + 1
+        today = datetime.now()
+        months_passed = (today.year - start_date.year) * 12 + (today.month - start_date.month) + 1
         if months_passed > 12:
             flash('Loan term completed.', 'info')
             return redirect(url_for('member_dashboard'))
 
-        # Check if already paid for this month
+        schedule_month = today.month
+        schedule_year = today.year
+
+        # Check if already paid for this payment cycle
         db_cursor.execute(
             'SELECT * FROM payments WHERE user_id = %s AND loan_id = %s AND month = %s AND year = %s',
-            (current_user.id, loan['loan_id'], months_passed, datetime.now().year)
+            (current_user.id, loan['loan_id'], schedule_month, schedule_year)
         )
         payment = db_cursor.fetchone()
 
@@ -456,8 +612,8 @@ def make_payment():
                 flash('You have already paid for this month.', 'info')
             else:
                 db_cursor.execute(
-                    'INSERT INTO payments (user_id, group_id, loan_id, month, year, amount, paid_on, status) VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s) ON DUPLICATE KEY UPDATE status=%s, paid_on=NOW()',
-                    (current_user.id, group_id, loan['loan_id'], months_passed, datetime.now().year, member_share, 'paid', 'paid')
+                    'INSERT INTO payments (user_id, group_id, loan_id, month, year, amount, paid_on, status) VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s) ON DUPLICATE KEY UPDATE amount=%s, status=%s, paid_on=NOW()',
+                    (current_user.id, group_id, loan['loan_id'], schedule_month, schedule_year, member_share, 'paid', member_share, 'paid')
                 )
                 db_conn.commit()
                 flash(f'Payment successful via {selected_method}!', 'success')
@@ -477,14 +633,72 @@ def make_payment():
         db_cursor.close()
         db_conn.close()
 
+@app.route('/receipt/<int:payment_id>')
+@login_required
+def receipt(payment_id):
+    db_conn, db_cursor = get_db()
+    try:
+        db_cursor.execute('''
+            SELECT p.*, u.name as user_name, u.email as user_email, u.unique_id as user_unique_id, l.amount as loan_amount, l.group_id
+            FROM payments p
+            JOIN users u ON p.user_id = u.user_id
+            JOIN loans l ON p.loan_id = l.loan_id
+            WHERE p.payment_id = %s
+        ''', (payment_id,))
+        payment = db_cursor.fetchone()
+        if not payment:
+            flash('Receipt not found.', 'danger')
+            return redirect(url_for('payment_history'))
+        if payment['user_id'] != current_user.id and not is_system_administrator():
+            flash('You do not have permission to download this receipt.', 'danger')
+            return redirect(url_for('payment_history'))
+
+        buffer = BytesIO()
+        pdf = canvas.Canvas(buffer, pagesize=letter)
+        pdf.setTitle(f'Receipt_{payment_id}')
+
+        pdf.setFont('Helvetica-Bold', 18)
+        pdf.drawString(50, 750, 'DWCRA Payment Receipt')
+
+        pdf.setFont('Helvetica', 11)
+        pdf.drawString(50, 725, f'Receipt ID: {payment_id}')
+        pdf.drawString(50, 710, f'Date: {datetime.now().strftime("%Y-%m-%d")}')
+        pdf.drawString(50, 695, f'Payer: {payment["user_name"]} ({payment["user_unique_id"]})')
+        pdf.drawString(50, 680, f'Email: {payment["user_email"]}')
+        pdf.drawString(50, 665, f'Loan ID: {payment["loan_id"]}')
+        pdf.drawString(50, 650, f'Group ID: {payment["group_id"]}')
+        pdf.drawString(50, 635, f'Payment Month: {payment["month"]}/{payment["year"]}')
+        pdf.drawString(50, 620, f'Amount Paid: ₹{payment["amount"]}')
+        pdf.drawString(50, 605, f'Payment Status: {payment["status"].title()}')
+
+        pdf.setFont('Helvetica-Bold', 12)
+        pdf.drawString(50, 575, 'Loan Summary')
+        pdf.setFont('Helvetica', 11)
+        pdf.drawString(50, 560, f'Loan Amount: ₹{payment["loan_amount"]}')
+        pdf.drawString(50, 545, f'Paid On: {payment["paid_on"].strftime("%Y-%m-%d %H:%M:%S") if payment["paid_on"] else "N/A"}')
+
+        pdf.showPage()
+        pdf.save()
+        buffer.seek(0)
+
+        return send_file(buffer, as_attachment=True, download_name=f'receipt_{payment_id}.pdf', mimetype='application/pdf')
+    finally:
+        db_cursor.close()
+        db_conn.close()
+
 @app.route('/payment_history')
 @login_required
 def payment_history():
     if current_user.role not in ['leader', 'member']:
         return redirect(url_for('home'))
-    cursor.execute('SELECT * FROM payments WHERE user_id = %s ORDER BY year, month', (current_user.id,))
-    payments = cursor.fetchall()
-    return render_template('payment_history.html', payments=payments, role=current_user.role, user_name=current_user.name)
+    db_conn, db_cursor = get_db()
+    try:
+        db_cursor.execute('SELECT * FROM payments WHERE user_id = %s ORDER BY year, month', (current_user.id,))
+        payments = db_cursor.fetchall()
+        return render_template('payment_history.html', payments=payments, role=current_user.role, user_name=current_user.name)
+    finally:
+        db_cursor.close()
+        db_conn.close()
 
 @app.route('/admin_dashboard')
 @login_required
@@ -649,14 +863,95 @@ def admin_identity_verifications():
     if not is_system_administrator():
         flash('Access denied. Only system administrator can access admin features.', 'danger')
         return redirect(url_for('home'))
-    cursor.execute('''
-        SELECT iv.*, u.name as user_name, u.unique_id, u.email, u.role 
-        FROM identity_verification iv 
-        JOIN users u ON iv.user_id = u.user_id 
-        ORDER BY iv.verified_at DESC
-    ''')
-    verifications = cursor.fetchall()
-    return render_template('admin_identity_verifications.html', verifications=verifications, role=current_user.role, user_name=current_user.name)
+    db_conn, db_cursor = get_db()
+    try:
+        db_cursor.execute('''
+            SELECT iv.*, u.name as user_name, u.unique_id, u.email, u.role 
+            FROM identity_verification iv 
+            JOIN users u ON iv.user_id = u.user_id 
+            ORDER BY iv.verified_at DESC
+        ''')
+        verifications = db_cursor.fetchall()
+        return render_template('admin_identity_verifications.html', verifications=verifications, role=current_user.role, user_name=current_user.name)
+    finally:
+        db_cursor.close()
+        db_conn.close()
+
+@app.route('/admin/reports/export/<format>')
+@login_required
+def admin_export_reports(format):
+    if not is_system_administrator():
+        flash('Access denied. Only system administrator can access admin features.', 'danger')
+        return redirect(url_for('home'))
+
+    db_conn, db_cursor = get_db()
+    try:
+        db_cursor.execute('''
+            SELECT p.payment_id, p.user_id, u.unique_id as user_unique_id, u.name as user_name, p.group_id, p.loan_id,
+                   p.month, p.year, p.amount, p.status, p.paid_on
+            FROM payments p
+            JOIN users u ON p.user_id = u.user_id
+            ORDER BY p.year, p.month, p.user_id
+        ''')
+        payments = db_cursor.fetchall()
+
+        if format == 'csv':
+            output = BytesIO()
+            writer = csv.writer(output)
+            writer.writerow(['Payment ID', 'User ID', 'Unique ID', 'Name', 'Group ID', 'Loan ID', 'Month', 'Year', 'Amount', 'Status', 'Paid On'])
+            for p in payments:
+                writer.writerow([
+                    p['payment_id'], p['user_id'], p['user_unique_id'], p['user_name'],
+                    p['group_id'], p['loan_id'], p['month'], p['year'], p['amount'],
+                    p['status'], p['paid_on'].strftime('%Y-%m-%d %H:%M:%S') if p['paid_on'] else ''
+                ])
+            output.seek(0)
+            return send_file(output, as_attachment=True, download_name='dwcra_payments_report.csv', mimetype='text/csv')
+
+        if format == 'pdf':
+            output = BytesIO()
+            pdf = canvas.Canvas(output, pagesize=letter)
+            pdf.setTitle('DWCRA Payments Report')
+            pdf.setFont('Helvetica-Bold', 14)
+            pdf.drawString(50, 750, 'DWCRA Payments Report')
+            pdf.setFont('Helvetica', 10)
+            y = 725
+            pdf.drawString(50, y, 'Export Date: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            y -= 20
+            pdf.setFont('Helvetica-Bold', 10)
+            headers = ['Payment ID', 'User', 'Loan', 'Month/Year', 'Amount', 'Status']
+            x_positions = [50, 100, 190, 270, 360, 430]
+            for i, header in enumerate(headers):
+                pdf.drawString(x_positions[i], y, header)
+            y -= 16
+            pdf.setFont('Helvetica', 9)
+
+            for p in payments:
+                if y < 80:
+                    pdf.showPage()
+                    y = 750
+                    pdf.setFont('Helvetica-Bold', 10)
+                    for i, header in enumerate(headers):
+                        pdf.drawString(x_positions[i], y, header)
+                    y -= 16
+                    pdf.setFont('Helvetica', 9)
+                pdf.drawString(x_positions[0], y, str(p['payment_id']))
+                pdf.drawString(x_positions[1], y, str(p['user_name']))
+                pdf.drawString(x_positions[2], y, str(p['loan_id']))
+                pdf.drawString(x_positions[3], y, f"{p['month']}/{p['year']}")
+                pdf.drawString(x_positions[4], y, str(p['amount']))
+                pdf.drawString(x_positions[5], y, str(p['status']).title())
+                y -= 14
+
+            pdf.save()
+            output.seek(0)
+            return send_file(output, as_attachment=True, download_name='dwcra_payments_report.pdf', mimetype='application/pdf')
+
+        flash('Unsupported export format.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        db_cursor.close()
+        db_conn.close()
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
